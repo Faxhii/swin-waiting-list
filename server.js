@@ -7,7 +7,11 @@ const path    = require('path');
 
 const app       = express();
 const PORT      = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, 'data', 'waitlist.json');
+
+// Vercel uses a read-only filesystem, so we use /tmp when hosted there
+const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
+const DATA_DIR  = IS_VERCEL ? '/tmp/data' : path.join(__dirname, 'data');
+const DATA_FILE = path.join(DATA_DIR, 'waitlist.json');
 
 // Middleware
 app.use(cors());
@@ -16,10 +20,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Data helpers ──────────────────────────────────────────────────────────────
 function ensureDataFile() {
-  const dir = path.join(__dirname, 'data');
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  if (!fs.existsSync(DATA_FILE))
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ entries: [] }, null, 2));
+  try {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    if (!fs.existsSync(DATA_FILE))
+      fs.writeFileSync(DATA_FILE, JSON.stringify({ entries: [] }, null, 2));
+  } catch (err) {
+    console.error("Could not ensure data file (read-only filesystem?):", err.message);
+  }
 }
 
 function readData() {
@@ -30,7 +37,8 @@ function readData() {
 
 function writeData(data) {
   ensureDataFile();
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+  try { fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2)); }
+  catch (err) { console.error("Could not write data file:", err.message); }
 }
 
 // ── Google Sheets webhook ─────────────────────────────────────────────────────
@@ -49,7 +57,6 @@ async function sendToGoogleSheets(entry) {
     console.log(`[SWIN] ✅ Google Sheets → ${res.status} ${text}`);
   } catch (err) {
     console.error(`[SWIN] ⚠️  Google Sheets webhook failed: ${err.message}`);
-    // Don't throw — the signup is still saved locally
   }
 }
 
@@ -81,7 +88,7 @@ app.post('/api/join', async (req, res) => {
 
   const data = readData();
 
-  // Prevent duplicates
+  // Prevent duplicates (only works reliably across same server instance, but good enough)
   if (data.entries.some(e => e.whatsapp === cleanedNumber))
     return res.status(409).json({ error: 'This number is already on the list! 🖤', alreadyJoined: true });
 
@@ -95,7 +102,7 @@ app.post('/api/join', async (req, res) => {
     joinedAt:  new Date().toISOString(),
   };
 
-  // Save locally first (never loses data)
+  // Save locally first (works fully on local machine, ephemeral on Vercel)
   data.entries.push(entry);
   writeData(data);
 
@@ -107,18 +114,24 @@ app.post('/api/join', async (req, res) => {
   res.json({ success: true, count: data.entries.length });
 });
 
-// Serve frontend
+// Serve frontend fallback (Vercel routes this automatically via vercel.json, but good for local)
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-  const sheetsStatus = process.env.WEBHOOK_URL
-    ? '✅ Google Sheets connected'
-    : '⚠️  Google Sheets NOT configured (set WEBHOOK_URL in .env)';
+// Export the Express API for Vercel
+module.exports = app;
 
-  console.log(`
+// Start server ONLY if not running on Vercel
+if (!IS_VERCEL) {
+  app.listen(PORT, () => {
+    const sheetsStatus = process.env.WEBHOOK_URL
+      ? '✅ Google Sheets connected'
+      : '⚠️  Google Sheets NOT configured (set WEBHOOK_URL in .env)';
+
+    console.log(`
 🖤 SWIN Waitlist running at http://localhost:${PORT}
 ${sheetsStatus}
-  `);
-});
+    `);
+  });
+}
