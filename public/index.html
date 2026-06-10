@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SWIN — Premium streetwear dropping soon. Join the waitlist for early access." />
+  <meta property="og:title" content="SWIN — Premium Streetwear" />
+  <meta property="og:description" content="Limited pieces. First come first served. Join the waitlist." />
+  <title>SWIN — Premium Streetwear</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000;
+      --white: #fff;
+      --gray-100: #f5f5f5;
+      --gray-200: #e0e0e0;
+      --gray-400: #bdbdbd;
+      --gray-500: #999;
+      --gray-700: #555;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--white);
+      color: var(--black);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── FADE IN ── */
+    .page-wrapper {
+      opacity: 0;
+      transform: translateY(14px);
+      animation: fadeInUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+    }
+    @keyframes fadeInUp { to { opacity:1; transform:translateY(0); } }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 660px; margin: 0 auto; padding: 0 22px; }
+
+    /* ── HEADER ── */
+    header { padding: 60px 0 44px; text-align: center; }
+    .brand-name {
+      font-size: clamp(2.8rem,11vw,4.8rem);
+      font-weight: 600;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+    .tagline {
+      font-size: 0.75rem; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray-500);
+    }
+
+    /* ── DIVIDER ── */
+    .divider { width: 36px; height: 1px; background: var(--gray-200); margin: 40px auto; }
+
+    /* ── LIVE COUNTER ── */
+    .counter-bar { text-align: center; margin-bottom: 40px; }
+    .counter-number {
+      font-size: 2.4rem; font-weight: 600; letter-spacing: -0.02em;
+      line-height: 1; display: block;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .counter-number.bump { transform: scale(1.2); }
+    .counter-label {
+      font-size: 0.7rem; font-weight: 400; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gray-500); margin-top: 7px; display: block;
+    }
+
+    /* ── PRODUCT GRID ── */
+    .product-section { margin-bottom: 12px; }
+    .product-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .product-card { aspect-ratio: 3/4; overflow: hidden; background: var(--gray-100); }
+    .product-card img {
+      width:100%; height:100%; object-fit:cover; display:block;
+      transition: transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .product-card:hover img { transform: scale(1.07); }
+    .product-note {
+      text-align: center; font-size: 0.68rem; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-500); margin-top: 16px;
+    }
+
+    /* ══════════════════════════════════════════
+       CONVERSATIONAL FORM
+    ══════════════════════════════════════════ */
+    .form-shell {
+      padding: 48px 0 20px;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 40px;
+      justify-content: center;
+    }
+    .progress-dot {
+      width: 22px; height: 2px;
+      background: var(--gray-200);
+      border-radius: 2px;
+      transition: background 0.35s ease;
+    }
+    .progress-dot.done { background: var(--black); }
+    .progress-dot.active { background: var(--black); }
+
+    /* Step container */
+    .steps-viewport {
+      position: relative;
+      min-height: 240px;
+    }
+
+    .step {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      opacity: 0;
+      transform: translateY(24px);
+      pointer-events: none;
+      transition: opacity 0.38s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.38s cubic-bezier(0.22,1,0.36,1);
+    }
+    .step.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      position: relative;
+    }
+    .step.exit {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+
+    /* Step number badge */
+    .step-num {
+      font-size: 0.62rem; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--gray-500);
+      margin-bottom: 12px; display: block;
+    }
+
+    /* Big question text */
+    .step-question {
+      font-size: clamp(1.3rem, 5vw, 1.75rem);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    /* Sub-hint under question */
+    .step-hint {
+      font-size: 0.76rem; font-weight: 300; color: var(--gray-500);
+      margin-bottom: 26px; line-height: 1.5;
+    }
+
+    /* Text / tel input */
+    .step-input {
+      width: 100%;
+      padding: 14px 0;
+      border: none;
+      border-bottom: 1.5px solid var(--gray-200);
+      background: transparent;
+      color: var(--black);
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      outline: none;
+      border-radius: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.2s;
+      display: block;
+    }
+    .step-input::placeholder { color: var(--gray-400); }
+    .step-input:focus { border-bottom-color: var(--black); }
+    .step-input.err { border-bottom-color: #c0392b; }
+
+    /* ── COUNTRY CODE SELECTOR ── */
+    .phone-row {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1.5px solid var(--gray-200);
+      transition: border-color 0.2s;
+      position: relative;
+    }
+    .phone-row:focus-within { border-bottom-color: var(--black); }
+    .phone-row.err { border-bottom-color: #c0392b; }
+
+    .country-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 14px 12px 14px 0;
+      background: transparent; border: none; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 0.92rem;
+      color: var(--black); white-space: nowrap;
+      flex-shrink: 0;
+      border-right: 1.5px solid var(--gray-200);
+      margin-right: 12px;
+    }
+    .country-btn:hover { color: var(--gray-700); }
+    .country-flag { font-size: 1.15rem; line-height: 1; }
+    .country-dial { font-size: 0.88rem; font-weight: 500; letter-spacing: 0.02em; }
+    .country-chevron {
+      font-size: 0.6rem; color: var(--gray-400);
+      transition: transform 0.2s;
+    }
+    .country-chevron.open { transform: rotate(180deg); }
+
+    .phone-number-input {
+      flex: 1; padding: 14px 0;
+      border: none; background: transparent;
+      color: var(--black); font-family: 'Inter', sans-serif;
+      font-size: 1.05rem; font-weight: 400;
+      outline: none; appearance: none; -webkit-appearance: none;
+    }
+    .phone-number-input::placeholder { color: var(--gray-400); }
+
+    /* Dropdown */
+    .country-dropdown {
+      position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+      background: var(--white); border: 1.5px solid var(--black);
+      z-index: 100; max-height: 260px; overflow-y: auto;
+      display: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .country-dropdown.open { display: block; }
+    .country-search {
+      width: 100%; padding: 10px 14px;
+      border: none; border-bottom: 1px solid var(--gray-200);
+      font-family: 'Inter', sans-serif; font-size: 0.85rem;
+      outline: none; background: var(--gray-100);
+      color: var(--black);
+    }
+    .country-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; cursor: pointer;
+      font-size: 0.85rem; font-weight: 400;
+      transition: background 0.12s;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .country-option:hover, .country-option.focused { background: var(--gray-100); }
+    .country-option .opt-flag { font-size: 1.05rem; }
+    .country-option .opt-name { flex: 1; color: var(--black); }
+    .country-option .opt-dial { font-size: 0.78rem; color: var(--gray-500); font-weight: 500; }
+
+    /* Size pills */
+    .size-grid {
+      display: grid;
+      grid-template-columns: repeat(6,1fr);
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .size-btn {
+      padding: 13px 4px;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-700);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.73rem; font-weight: 500; letter-spacing: 0.06em;
+      text-align: center; cursor: pointer; border-radius: 0;
+      transition: border-color 0.18s, background 0.18s, color 0.18s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .size-btn:hover { border-color: var(--black); color: var(--black); }
+    .size-btn.selected { background: var(--black); border-color: var(--black); color: var(--white); }
+    .size-grid.err .size-btn:not(.selected) { border-color: #e8b0a8; }
+
+    /* Choice pills (interest / referral) */
+    .choice-grid {
+      display: flex; flex-wrap: wrap; gap: 9px;
+      margin-bottom: 4px;
+    }
+    .choice-btn {
+      padding: 10px 18px;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      color: var(--gray-700);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem; font-weight: 400; letter-spacing: 0.04em;
+      cursor: pointer; border-radius: 0;
+      transition: border-color 0.18s, background 0.18s, color 0.18s;
+      user-select: none; -webkit-user-select: none;
+    }
+    .choice-btn:hover { border-color: var(--black); color: var(--black); }
+    .choice-btn.selected { background: var(--black); border-color: var(--black); color: var(--white); }
+
+    /* CTA button row */
+    .step-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .next-btn {
+      padding: 14px 30px;
+      background: var(--black);
+      color: var(--white);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.18em;
+      text-transform: uppercase; cursor: pointer; border-radius: 0;
+      transition: background 0.2s, transform 0.15s;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .next-btn:hover { background: #111; }
+    .next-btn:active { transform: scale(0.98); }
+    .next-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .next-btn .btn-text { transition: opacity 0.2s; }
+    .next-btn .btn-loading { display: none; }
+    .next-btn.loading .btn-text { display: none; }
+    .next-btn.loading .btn-loading { display: inline; }
+
+    .enter-hint {
+      font-size: 0.64rem; color: var(--gray-400);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .skip-btn {
+      font-size: 0.72rem; color: var(--gray-400);
+      background: none; border: none; cursor: pointer;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0; text-decoration: underline;
+      transition: color 0.2s;
+    }
+    .skip-btn:hover { color: var(--gray-700); }
+    .back-btn {
+      font-size: 0.7rem; color: var(--gray-400);
+      background: none; border: none; cursor: pointer;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0; display: flex; align-items: center; gap: 5px;
+      transition: color 0.2s;
+    }
+    .back-btn:hover { color: var(--black); }
+
+    /* Error text */
+    .step-error {
+      font-size: 0.74rem; color: #c0392b;
+      letter-spacing: 0.02em; margin-top: 8px;
+      min-height: 18px;
+    }
+
+    /* Keyboard hint */
+    .kbd-hint {
+      font-size: 0.62rem; color: var(--gray-400);
+      letter-spacing: 0.08em; margin-top: 6px;
+    }
+
+    /* ── SUCCESS STATE ── */
+    .success-section {
+      display: none; padding: 48px 0 16px; text-align: center;
+    }
+    .success-section.visible {
+      display: block;
+      animation: fadeInUp 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    .success-emoji {
+      font-size: 2.6rem; margin-bottom: 20px; display: block;
+      animation: heartbeat 1.2s ease-in-out 0.3s;
+    }
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); }
+      30%      { transform: scale(1.28); }
+      60%      { transform: scale(1.1); }
+    }
+    .success-name { font-size: 1.5rem; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 6px; }
+    .success-sub {
+      font-size: 0.72rem; font-weight: 400; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--gray-500); margin-bottom: 30px;
+    }
+    .success-body {
+      font-size: 0.9rem; font-weight: 300; line-height: 1.8;
+      color: var(--gray-700); margin-bottom: 32px;
+    }
+    .success-ig {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.76rem; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--black);
+      text-decoration: none; border-bottom: 1px solid var(--black);
+      padding-bottom: 3px; transition: opacity 0.2s;
+    }
+    .success-ig:hover { opacity: 0.55; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 48px 0 36px; text-align: center;
+      border-top: 1px solid var(--gray-200); margin-top: 60px;
+    }
+    .footer-ig {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--black);
+      text-decoration: none; margin-bottom: 14px; transition: opacity 0.2s;
+    }
+    .footer-ig:hover { opacity: 0.5; }
+    .footer-ig svg { width: 14px; height: 14px; }
+    .footer-copy {
+      display: block; font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500);
+    }
+
+    /* ── CONFETTI ── */
+    #confetti-canvas {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      pointer-events: none; z-index: 9999;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      header { padding: 46px 0 34px; }
+      .product-grid { gap: 6px; }
+      .form-shell { padding: 36px 0 12px; }
+      .size-grid { grid-template-columns: repeat(3,1fr); gap: 9px; }
+      .size-btn { padding: 14px 4px; }
+      .steps-viewport { min-height: 280px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="page-wrapper">
+    <div class="container">
+
+      <!-- HEADER -->
+      <header>
+        <h1 class="brand-name">SWIN</h1>
+        <p class="tagline">Premium streetwear. Dropping soon.</p>
+      </header>
+
+      <div class="divider"></div>
+
+      <!-- LIVE COUNTER -->
+      <div class="counter-bar">
+        <span class="counter-number" id="counter-number">—</span>
+        <span class="counter-label">people already waiting</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- PRODUCT IMAGES -->
+      <section class="product-section" aria-label="Product preview">
+        <div class="product-grid">
+          <div class="product-card">
+            <img src="/images/design1.png" alt="SWIN Drop — Piece 1" loading="eager" />
+          </div>
+          <div class="product-card">
+            <img src="/images/design2.png" alt="SWIN Drop — Piece 2" loading="eager" />
+          </div>
+          <div class="product-card">
+            <img src="/images/design3.png" alt="SWIN Drop — Piece 3" loading="eager" />
+          </div>
+        </div>
+        <p class="product-note">Limited pieces. First come first served.</p>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- ═══════════════════════════════
+           CONVERSATIONAL FORM
+      ═══════════════════════════════ -->
+      <section class="form-shell" id="form-shell" aria-label="Join the waitlist">
+
+        <!-- Progress dots -->
+        <div class="progress-wrap" id="progress-wrap" aria-hidden="true">
+          <!-- filled by JS -->
+        </div>
+
+        <!-- Steps -->
+        <div class="steps-viewport" id="steps-viewport">
+
+          <!-- STEP 1 · NAME -->
+          <div class="step" id="step-1" data-step="1">
+            <span class="step-num">01 / 06</span>
+            <h2 class="step-question">What's your name?</h2>
+            <p class="step-hint">So we know who we're dropping to. 🖤</p>
+            <input
+              type="text" id="name-input" class="step-input"
+              placeholder="Your name…" autocomplete="name"
+            />
+            <p class="step-error" id="err-1"></p>
+            <div class="step-actions">
+              <button class="next-btn" id="next-1" type="button">
+                <span class="btn-text">Continue</span>
+                <span class="btn-loading">…</span>
+              </button>
+              <span class="enter-hint">or press Enter ↵</span>
+            </div>
+          </div>
+
+          <!-- STEP 2 · WHATSAPP -->
+          <div class="step" id="step-2" data-step="2">
+            <span class="step-num">02 / 06</span>
+            <h2 class="step-question" id="q2-text">Your WhatsApp number?</h2>
+            <p class="step-hint">We'll reach you here on launch day. Nothing else.</p>
+
+            <!-- Phone input with country picker -->
+            <div class="phone-row" id="phone-row">
+              <!-- Country code button -->
+              <button type="button" class="country-btn" id="country-btn" aria-haspopup="listbox" aria-expanded="false">
+                <span class="country-flag" id="selected-flag">🇮🇳</span>
+                <span class="country-dial" id="selected-dial">+91</span>
+                <span class="country-chevron" id="country-chevron">▼</span>
+              </button>
+
+              <!-- Local number input -->
+              <input
+                type="tel" id="wa-input" class="phone-number-input"
+                placeholder="98765 43210" autocomplete="tel" inputmode="tel"
+              />
+
+              <!-- Dropdown -->
+              <div class="country-dropdown" id="country-dropdown" role="listbox">
+                <input type="text" class="country-search" id="country-search" placeholder="Search country…" autocomplete="off" />
+                <div id="country-list"></div>
+              </div>
+            </div>
+
+            <p class="step-error" id="err-2"></p>
+            <div class="step-actions">
+              <button class="next-btn" id="next-2" type="button">
+                <span class="btn-text">Continue</span>
+                <span class="btn-loading">…</span>
+              </button>
+              <span class="enter-hint">or press Enter ↵</span>
+              <button class="back-btn" id="back-2" type="button">← Back</button>
+            </div>
+          </div>
+
+          <!-- STEP 3 · SIZE -->
+          <div class="step" id="step-3" data-step="3">
+            <span class="step-num">03 / 06</span>
+            <h2 class="step-question">What's your size?</h2>
+            <p class="step-hint">We'll reserve your size before anyone else gets it.</p>
+            <div class="size-grid" id="size-grid" role="group" aria-label="Select size">
+              <button type="button" class="size-btn" data-size="XS">XS</button>
+              <button type="button" class="size-btn" data-size="S">S</button>
+              <button type="button" class="size-btn" data-size="M">M</button>
+              <button type="button" class="size-btn" data-size="L">L</button>
+              <button type="button" class="size-btn" data-size="XL">XL</button>
+              <button type="button" class="size-btn" data-size="XXL">XXL</button>
+            </div>
+            <p class="step-error" id="err-3"></p>
+            <div class="step-actions">
+              <button class="next-btn" id="next-3" type="button">
+                <span class="btn-text">Continue</span>
+                <span class="btn-loading">…</span>
+              </button>
+              <button class="back-btn" id="back-3" type="button">← Back</button>
+            </div>
+          </div>
+
+          <!-- STEP 4 · CITY -->
+          <div class="step" id="step-4" data-step="4">
+            <span class="step-num">04 / 06</span>
+            <h2 class="step-question">Which city are you in?</h2>
+            <p class="step-hint">Helps us plan the drop logistics. You can skip this.</p>
+            <input
+              type="text" id="city-input" class="step-input"
+              placeholder="Mumbai, Delhi, Bangalore…" autocomplete="address-level2"
+            />
+            <p class="step-error" id="err-4"></p>
+            <div class="step-actions">
+              <button class="next-btn" id="next-4" type="button">
+                <span class="btn-text">Continue</span>
+                <span class="btn-loading">…</span>
+              </button>
+              <span class="enter-hint">or press Enter ↵</span>
+              <button class="skip-btn" id="skip-4" type="button">Skip</button>
+              <button class="back-btn" id="back-4" type="button">← Back</button>
+            </div>
+          </div>
+
+          <!-- STEP 5 · INTEREST -->
+          <div class="step" id="step-5" data-step="5">
+            <span class="step-num">05 / 06</span>
+            <h2 class="step-question">What are you most hyped for?</h2>
+            <p class="step-hint">Pick what you're waiting on. You can skip.</p>
+            <div class="choice-grid" id="interest-grid">
+              <button type="button" class="choice-btn" data-val="Hoodies">Hoodies</button>
+              <button type="button" class="choice-btn" data-val="Tees">Graphic Tees</button>
+              <button type="button" class="choice-btn" data-val="Cargo">Cargo / Bottoms</button>
+              <button type="button" class="choice-btn" data-val="Accessories">Accessories</button>
+              <button type="button" class="choice-btn" data-val="Everything">Everything 🔥</button>
+            </div>
+            <p class="step-error" id="err-5"></p>
+            <div class="step-actions">
+              <button class="next-btn" id="next-5" type="button">
+                <span class="btn-text">Continue</span>
+                <span class="btn-loading">…</span>
+              </button>
+              <button class="skip-btn" id="skip-5" type="button">Skip</button>
+              <button class="back-btn" id="back-5" type="button">← Back</button>
+            </div>
+          </div>
+
+          <!-- STEP 6 · REFERRAL -->
+          <div class="step" id="step-6" data-step="6">
+            <span class="step-num">06 / 06</span>
+            <h2 class="step-question">How did you find SWIN?</h2>
+            <p class="step-hint">Last one, we promise. You can skip.</p>
+            <div class="choice-grid" id="referral-grid">
+              <button type="button" class="choice-btn" data-val="Instagram">Instagram</button>
+              <button type="button" class="choice-btn" data-val="Friend">A friend</button>
+              <button type="button" class="choice-btn" data-val="Reels">Reels / Video</button>
+              <button type="button" class="choice-btn" data-val="WhatsApp">WhatsApp</button>
+              <button type="button" class="choice-btn" data-val="Other">Other</button>
+            </div>
+            <p class="step-error" id="err-6"></p>
+            <div class="step-actions">
+              <button class="next-btn" id="next-6" type="button">
+                <span class="btn-text">Join the Waitlist 🖤</span>
+                <span class="btn-loading">Joining…</span>
+              </button>
+              <button class="skip-btn" id="skip-6" type="button">Skip &amp; Join</button>
+              <button class="back-btn" id="back-6" type="button">← Back</button>
+            </div>
+          </div>
+
+        </div><!-- /steps-viewport -->
+
+        <p style="text-align:center;font-size:0.64rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-400);margin-top:24px;">
+          No spam. Launch updates only.
+        </p>
+
+      </section>
+
+      <!-- SUCCESS -->
+      <section class="success-section" id="success-section" aria-label="Waitlist confirmed" aria-live="polite">
+        <span class="success-emoji">🖤</span>
+        <h2 class="success-name" id="success-name">You're on the list.</h2>
+        <p class="success-sub">We'll reach you on WhatsApp on drop day.</p>
+        <p class="success-body">
+          On launch day we're going live — watch us pack your orders in real time, see the first reactions, and experience the drop together.<br><br>
+          It's not just a launch, it's a moment.
+        </p>
+        <p style="margin-bottom:10px;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-500);">Stay tuned on Instagram</p>
+        <a href="https://instagram.com/swin" target="_blank" rel="noopener noreferrer" class="success-ig">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+          </svg>
+          @swin
+        </a>
+      </section>
+
+    </div><!-- /container -->
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <a href="https://instagram.com/swin" target="_blank" rel="noopener noreferrer" class="footer-ig">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+          </svg>
+          @swin
+        </a>
+        <span class="footer-copy">© SWIN 2025. All rights reserved.</span>
+      </div>
+    </footer>
+
+  </div><!-- /page-wrapper -->
+
+  <script>
+  // ═══════════════════════════════════════════════════════════════
+  //  CONFETTI
+  // ═══════════════════════════════════════════════════════════════
+  const cvs = document.getElementById('confetti-canvas');
+  const ctx = cvs.getContext('2d');
+  let particles = [], animId = null;
+
+  function resizeCvs() { cvs.width = innerWidth; cvs.height = innerHeight; }
+  resizeCvs();
+  window.addEventListener('resize', resizeCvs);
+
+  function mkParticle() {
+    const cols = ['#000','#2a2a2a','#555','#888','#bbb'];
+    return {
+      x: Math.random() * cvs.width, y: Math.random() * -240,
+      size: Math.random() * 7 + 3,
+      color: cols[Math.floor(Math.random() * cols.length)],
+      vy: Math.random() * 3 + 1.8, vx: (Math.random() - 0.5) * 2.5,
+      rot: Math.random() * 360, rv: (Math.random() - 0.5) * 8,
+      op: 1, shape: Math.random() > 0.45 ? 'rect' : 'circle',
+    };
+  }
+  function launchConfetti() {
+    cancelAnimationFrame(animId);
+    particles = Array.from({ length: 160 }, mkParticle);
+    tickConfetti();
+    setTimeout(() => { cancelAnimationFrame(animId); ctx.clearRect(0,0,cvs.width,cvs.height); }, 6000);
+  }
+  function tickConfetti() {
+    ctx.clearRect(0,0,cvs.width,cvs.height);
+    particles.forEach(p => {
+      p.y += p.vy; p.x += p.vx; p.rot += p.rv;
+      if (p.y > cvs.height + 20) p.op -= 0.05;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.op);
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      if (p.shape === 'rect') ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.45);
+      else { ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+      ctx.restore();
+    });
+    particles = particles.filter(p => p.op > 0);
+    if (particles.length) animId = requestAnimationFrame(tickConfetti);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  COUNTER
+  // ═══════════════════════════════════════════════════════════════
+  const counterEl = document.getElementById('counter-number');
+  async function fetchCount() {
+    try {
+      const r = await fetch('/api/count');
+      if (!r.ok) return;
+      const { count } = await r.json();
+      counterEl.textContent = count.toLocaleString();
+    } catch {}
+  }
+  function bumpCounter(count) {
+    counterEl.textContent = count.toLocaleString();
+    counterEl.classList.add('bump');
+    setTimeout(() => counterEl.classList.remove('bump'), 400);
+  }
+  fetchCount();
+  setInterval(fetchCount, 30000);
+
+  // ═══════════════════════════════════════════════════════════════
+  //  CONVERSATIONAL FORM
+  // ═══════════════════════════════════════════════════════════════
+  const TOTAL_STEPS = 6;
+  let currentStep = 1;
+
+  // Data collected
+  const answers = {
+    name: '', whatsapp: '', size: '',
+    city: '', interest: '', referral: '',
+  };
+
+  // Progress dots
+  const progressWrap = document.getElementById('progress-wrap');
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const d = document.createElement('div');
+    d.className = 'progress-dot';
+    d.id = 'dot-' + i;
+    progressWrap.appendChild(d);
+  }
+
+  function updateProgress(step) {
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const d = document.getElementById('dot-' + i);
+      d.className = 'progress-dot' + (i < step ? ' done' : i === step ? ' active' : '');
+    }
+  }
+
+  function goTo(step) {
+    // Close country dropdown if open
+    closeDropdown();
+
+    // Exit current
+    const prev = document.getElementById('step-' + currentStep);
+    if (prev) { prev.classList.remove('active'); prev.classList.add('exit'); }
+    setTimeout(() => { if (prev) prev.classList.remove('exit'); }, 400);
+
+    currentStep = step;
+    updateProgress(step);
+
+    const next = document.getElementById('step-' + step);
+    if (next) {
+      setTimeout(() => {
+        next.classList.add('active');
+        // Focus appropriate input
+        if (step === 2) {
+          setTimeout(() => document.getElementById('wa-input').focus(), 80);
+        } else {
+          const inp = next.querySelector('.step-input');
+          if (inp) setTimeout(() => inp.focus(), 50);
+        }
+      }, 50);
+    }
+  }
+
+  function clearErr(n) {
+    const el = document.getElementById('err-' + n);
+    if (el) el.textContent = '';
+  }
+  function showErr(n, msg, fieldEl) {
+    const el = document.getElementById('err-' + n);
+    if (el) el.textContent = msg;
+    if (fieldEl) { fieldEl.classList.add('err'); fieldEl.focus(); }
+  }
+
+  // ── STEP 1: NAME ───────────────────────────────────────────────
+  const nameInput = document.getElementById('name-input');
+  document.getElementById('next-1').addEventListener('click', validateStep1);
+  nameInput.addEventListener('keydown', e => { if (e.key === 'Enter') validateStep1(); });
+  nameInput.addEventListener('input', () => { nameInput.classList.remove('err'); clearErr(1); });
+
+  function validateStep1() {
+    const val = nameInput.value.trim();
+    if (val.length < 2) { showErr(1, 'Please enter your name.', nameInput); return; }
+    answers.name = val;
+    // Personalise step 2
+    document.getElementById('q2-text').textContent = `Nice to meet you, ${val.split(' ')[0]}. Your WhatsApp number?`;
+    goTo(2);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  COUNTRY CODE PICKER
+  // ═══════════════════════════════════════════════════════════════
+  const COUNTRIES = [
+    { flag: '🇮🇳', name: 'India',           dial: '+91'  },
+    { flag: '🇦🇪', name: 'UAE',             dial: '+971' },
+    { flag: '🇸🇦', name: 'Saudi Arabia',    dial: '+966' },
+    { flag: '🇶🇦', name: 'Qatar',           dial: '+974' },
+    { flag: '🇰🇼', name: 'Kuwait',          dial: '+965' },
+    { flag: '🇧🇭', name: 'Bahrain',         dial: '+973' },
+    { flag: '🇴🇲', name: 'Oman',            dial: '+968' },
+    { flag: '🇬🇧', name: 'United Kingdom',  dial: '+44'  },
+    { flag: '🇺🇸', name: 'United States',   dial: '+1'   },
+    { flag: '🇨🇦', name: 'Canada',          dial: '+1'   },
+    { flag: '🇦🇺', name: 'Australia',       dial: '+61'  },
+    { flag: '🇲🇾', name: 'Malaysia',        dial: '+60'  },
+    { flag: '🇸🇬', name: 'Singapore',       dial: '+65'  },
+    { flag: '🇵🇰', name: 'Pakistan',        dial: '+92'  },
+    { flag: '🇧🇩', name: 'Bangladesh',      dial: '+880' },
+    { flag: '🇱🇰', name: 'Sri Lanka',       dial: '+94'  },
+    { flag: '🇳🇵', name: 'Nepal',           dial: '+977' },
+    { flag: '🇩🇪', name: 'Germany',         dial: '+49'  },
+    { flag: '🇫🇷', name: 'France',          dial: '+33'  },
+    { flag: '🇮🇹', name: 'Italy',           dial: '+39'  },
+  ];
+
+  let selectedCountry = COUNTRIES[0]; // Default: India
+  let dropdownOpen    = false;
+
+  const countryBtn      = document.getElementById('country-btn');
+  const selectedFlagEl  = document.getElementById('selected-flag');
+  const selectedDialEl  = document.getElementById('selected-dial');
+  const countryChevron  = document.getElementById('country-chevron');
+  const countryDropdown = document.getElementById('country-dropdown');
+  const countrySearch   = document.getElementById('country-search');
+  const countryListEl   = document.getElementById('country-list');
+  const phoneRow        = document.getElementById('phone-row');
+
+  function renderCountryList(filter) {
+    countryListEl.innerHTML = '';
+    const items = filter
+      ? COUNTRIES.filter(c =>
+          c.name.toLowerCase().includes(filter.toLowerCase()) ||
+          c.dial.includes(filter)
+        )
+      : COUNTRIES;
+    items.forEach(c => {
+      const opt = document.createElement('div');
+      opt.className = 'country-option';
+      opt.setAttribute('role', 'option');
+      opt.innerHTML = `<span class="opt-flag">${c.flag}</span><span class="opt-name">${c.name}</span><span class="opt-dial">${c.dial}</span>`;
+      opt.addEventListener('mousedown', e => {
+        e.preventDefault(); // keep focus from jumping
+        selectCountry(c);
+      });
+      countryListEl.appendChild(opt);
+    });
+  }
+
+  function selectCountry(c) {
+    selectedCountry = c;
+    selectedFlagEl.textContent = c.flag;
+    selectedDialEl.textContent = c.dial;
+    closeDropdown();
+    document.getElementById('wa-input').focus();
+  }
+
+  function openDropdown() {
+    dropdownOpen = true;
+    countryDropdown.classList.add('open');
+    countryChevron.classList.add('open');
+    countryBtn.setAttribute('aria-expanded', 'true');
+    countrySearch.value = '';
+    renderCountryList('');
+    setTimeout(() => countrySearch.focus(), 30);
+  }
+
+  function closeDropdown() {
+    dropdownOpen = false;
+    countryDropdown.classList.remove('open');
+    countryChevron.classList.remove('open');
+    countryBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  countryBtn.addEventListener('click', () => {
+    dropdownOpen ? closeDropdown() : openDropdown();
+  });
+
+  countrySearch.addEventListener('input', () => {
+    renderCountryList(countrySearch.value.trim());
+  });
+
+  // Close when clicking outside the phone row
+  document.addEventListener('click', e => {
+    if (!phoneRow.contains(e.target)) closeDropdown();
+  });
+
+  renderCountryList(''); // initial render
+
+  // ── STEP 2: WHATSAPP ───────────────────────────────────────────
+  const waInput = document.getElementById('wa-input');
+  document.getElementById('next-2').addEventListener('click', validateStep2);
+  document.getElementById('back-2').addEventListener('click', () => goTo(1));
+  waInput.addEventListener('keydown', e => { if (e.key === 'Enter') validateStep2(); });
+  waInput.addEventListener('input', () => {
+    waInput.classList.remove('err');
+    phoneRow.classList.remove('err');
+    clearErr(2);
+    waInput.value = waInput.value.replace(/[^0-9\s\-]/g, ''); // digits, space, dash only
+  });
+
+  function validateStep2() {
+    const localNum = waInput.value.trim();
+    if (!localNum) {
+      phoneRow.classList.add('err');
+      showErr(2, 'Please enter your WhatsApp number.');
+      waInput.focus(); return;
+    }
+    if (localNum.replace(/[\s\-]/g, '').length < 6) {
+      phoneRow.classList.add('err');
+      showErr(2, 'Please enter a valid number.');
+      waInput.focus(); return;
+    }
+    // Combine: +91 98765 43210
+    answers.whatsapp = selectedCountry.dial + ' ' + localNum;
+    goTo(3);
+  }
+
+  // ── STEP 3: SIZE ───────────────────────────────────────────────
+  const sizeGrid = document.getElementById('size-grid');
+  const sizeBtns = sizeGrid.querySelectorAll('.size-btn');
+  sizeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sizeBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      answers.size = btn.dataset.size;
+      sizeGrid.classList.remove('err');
+      clearErr(3);
+    });
+  });
+  document.getElementById('next-3').addEventListener('click', () => {
+    if (!answers.size) { showErr(3, 'Please pick your size.'); sizeGrid.classList.add('err'); return; }
+    goTo(4);
+  });
+  document.getElementById('back-3').addEventListener('click', () => goTo(2));
+
+  // ── STEP 4: CITY (optional) ─────────────────────────────────
+  const cityInput = document.getElementById('city-input');
+  document.getElementById('next-4').addEventListener('click', () => {
+    answers.city = cityInput.value.trim();
+    goTo(5);
+  });
+  document.getElementById('skip-4').addEventListener('click', () => { answers.city = ''; goTo(5); });
+  document.getElementById('back-4').addEventListener('click', () => goTo(3));
+  cityInput.addEventListener('keydown', e => { if (e.key === 'Enter') { answers.city = cityInput.value.trim(); goTo(5); } });
+
+  // ── STEP 5: INTEREST (optional) ─────────────────────────────
+  const interestBtns = document.querySelectorAll('#interest-grid .choice-btn');
+  interestBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      interestBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      answers.interest = btn.dataset.val;
+    });
+  });
+  document.getElementById('next-5').addEventListener('click', () => goTo(6));
+  document.getElementById('skip-5').addEventListener('click', () => { answers.interest = ''; goTo(6); });
+  document.getElementById('back-5').addEventListener('click', () => goTo(4));
+
+  // ── STEP 6: REFERRAL (optional) + SUBMIT ─────────────────────
+  const referralBtns = document.querySelectorAll('#referral-grid .choice-btn');
+  referralBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      referralBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      answers.referral = btn.dataset.val;
+    });
+  });
+
+  const submitBtn = document.getElementById('next-6');
+  document.getElementById('skip-6').addEventListener('click', () => { answers.referral = ''; submitForm(); });
+  document.getElementById('back-6').addEventListener('click', () => goTo(5));
+  submitBtn.addEventListener('click', submitForm);
+
+  async function submitForm() {
+    submitBtn.disabled = true;
+    submitBtn.classList.add('loading');
+    clearErr(6);
+
+    try {
+      const res = await fetch('/api/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(answers),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        if (data.alreadyJoined) {
+          showErr(6, "You're already on the list! 🖤");
+        } else {
+          showErr(6, data.error || 'Something went wrong. Please try again.');
+        }
+        return;
+      }
+
+      // SUCCESS
+      bumpCounter(data.count);
+      document.getElementById('success-name').textContent =
+        `You're on the list, ${answers.name.split(' ')[0]}. 🖤`;
+      document.getElementById('form-shell').style.display = 'none';
+      const ss = document.getElementById('success-section');
+      ss.classList.add('visible');
+      ss.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      launchConfetti();
+
+    } catch {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('loading');
+      showErr(6, 'Network error. Check your connection and try again.');
+    }
+  }
+
+  // ── INIT: show step 1 ──────────────────────────────────────────
+  goTo(1);
+  </script>
+</body>
+</html>
