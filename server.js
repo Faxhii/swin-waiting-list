@@ -65,12 +65,37 @@ async function sendToGoogleSheets(entry) {
   }
 }
 
+// ── Google Sheets count (persistent across cold starts) ──────────────────────
+// Calls the same Apps Script URL (WEBHOOK_URL) via GET → doGet() returns count.
+async function getCountFromSheets() {
+  const url = process.env.WEBHOOK_URL;
+  if (!url) return null; // not configured, fall back to BASE_COUNT
+
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      signal: AbortSignal.timeout(5000),
+    });
+    const json = await res.json();
+    if (typeof json.count === 'number') return json.count;
+    return null;
+  } catch (err) {
+    console.error(`[SWIN] ⚠️  Could not fetch count from Sheets: ${err.message}`);
+    return null;
+  }
+}
+
 // ── Routes ────────────────────────────────────────────────────────────────────
 
 // GET /api/count
-// Returns BASE_COUNT (env var) + entries saved in this server instance.
-// On Vercel, /tmp resets on cold starts, so BASE_COUNT preserves the real total.
-app.get('/api/count', (req, res) => {
+// Reads the real count from Google Sheets so it's always accurate —
+// even after Vercel cold starts. Falls back to BASE_COUNT if Sheets is down.
+app.get('/api/count', async (req, res) => {
+  const sheetsCount = await getCountFromSheets();
+  if (sheetsCount !== null) {
+    return res.json({ count: sheetsCount });
+  }
+  // Fallback: BASE_COUNT + local /tmp entries
   const data = readData();
   res.json({ count: BASE_COUNT + data.entries.length });
 });
@@ -113,11 +138,14 @@ app.post('/api/join', async (req, res) => {
   data.entries.push(entry);
   writeData(data);
 
-  const totalCount = BASE_COUNT + data.entries.length;
-  console.log(`[SWIN] 🖤 ${entry.name} (${entry.whatsapp}) | Size: ${entry.size} | Total: ${totalCount}`);
+  // Push to Google Sheets (wait for it so we can return the updated count)
+  await sendToGoogleSheets(entry);
 
-  // Then push to Google Sheets (async, non-blocking)
-  sendToGoogleSheets(entry);
+  // Get the true persistent count from Sheets (or fall back to local estimate)
+  const sheetsCount = await getCountFromSheets();
+  const totalCount = sheetsCount !== null ? sheetsCount : (BASE_COUNT + data.entries.length);
+
+  console.log(`[SWIN] 🖤 ${entry.name} (${entry.whatsapp}) | Size: ${entry.size} | Total: ${totalCount}`);
 
   res.json({ success: true, count: totalCount });
 });

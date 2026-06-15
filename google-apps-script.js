@@ -12,6 +12,26 @@
  * NEW deployment (not update existing) for changes to take effect.
  */
 
+/**
+ * GET endpoint — returns the current signup count.
+ * The server calls this same URL (WEBHOOK_URL) via GET to get a persistent count.
+ * This survives Vercel cold starts because the data lives in Google Sheets.
+ */
+function doGet(e) {
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    // subtract 1 for the header row (returns 0 if sheet is empty)
+    const count = Math.max(0, sheet.getLastRow() - 1);
+    return ContentService
+      .createTextOutput(JSON.stringify({ count: count }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ count: 0, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 function doPost(e) {
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
