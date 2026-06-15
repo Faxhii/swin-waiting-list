@@ -88,12 +88,13 @@ async function getCountFromSheets() {
 // ── Routes ────────────────────────────────────────────────────────────────────
 
 // GET /api/count
-// Reads the real count from Google Sheets so it's always accurate —
-// even after Vercel cold starts. Falls back to BASE_COUNT if Sheets is down.
+// Reads the real count from Google Sheets and adds BASE_COUNT on top.
+// BASE_COUNT = the starting number you set in Vercel env vars (e.g. 329).
+// Even after Vercel cold starts the count is always accurate.
 app.get('/api/count', async (req, res) => {
   const sheetsCount = await getCountFromSheets();
   if (sheetsCount !== null) {
-    return res.json({ count: sheetsCount });
+    return res.json({ count: BASE_COUNT + sheetsCount });
   }
   // Fallback: BASE_COUNT + local /tmp entries
   const data = readData();
@@ -141,9 +142,9 @@ app.post('/api/join', async (req, res) => {
   // Push to Google Sheets (wait for it so we can return the updated count)
   await sendToGoogleSheets(entry);
 
-  // Get the true persistent count from Sheets (or fall back to local estimate)
+  // Get the true persistent count from Sheets and add BASE_COUNT on top
   const sheetsCount = await getCountFromSheets();
-  const totalCount = sheetsCount !== null ? sheetsCount : (BASE_COUNT + data.entries.length);
+  const totalCount = sheetsCount !== null ? (BASE_COUNT + sheetsCount) : (BASE_COUNT + data.entries.length);
 
   console.log(`[SWIN] 🖤 ${entry.name} (${entry.whatsapp}) | Size: ${entry.size} | Total: ${totalCount}`);
 
