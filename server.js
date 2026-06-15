@@ -13,6 +13,11 @@ const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
 const DATA_DIR  = IS_VERCEL ? '/tmp/data' : path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'waitlist.json');
 
+// BASE_COUNT: real signups already stored in Google Sheets / offline.
+// Set this env var in Vercel dashboard so the counter never resets to 0.
+// e.g. BASE_COUNT=329
+const BASE_COUNT = parseInt(process.env.BASE_COUNT || '0', 10);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -63,9 +68,11 @@ async function sendToGoogleSheets(entry) {
 // ── Routes ────────────────────────────────────────────────────────────────────
 
 // GET /api/count
+// Returns BASE_COUNT (env var) + entries saved in this server instance.
+// On Vercel, /tmp resets on cold starts, so BASE_COUNT preserves the real total.
 app.get('/api/count', (req, res) => {
   const data = readData();
-  res.json({ count: data.entries.length });
+  res.json({ count: BASE_COUNT + data.entries.length });
 });
 
 // POST /api/join
@@ -106,12 +113,13 @@ app.post('/api/join', async (req, res) => {
   data.entries.push(entry);
   writeData(data);
 
-  console.log(`[SWIN] 🖤 ${entry.name} (${entry.whatsapp}) | Size: ${entry.size} | Total: ${data.entries.length}`);
+  const totalCount = BASE_COUNT + data.entries.length;
+  console.log(`[SWIN] 🖤 ${entry.name} (${entry.whatsapp}) | Size: ${entry.size} | Total: ${totalCount}`);
 
   // Then push to Google Sheets (async, non-blocking)
   sendToGoogleSheets(entry);
 
-  res.json({ success: true, count: data.entries.length });
+  res.json({ success: true, count: totalCount });
 });
 
 // Serve frontend fallback (Vercel routes this automatically via vercel.json, but good for local)
