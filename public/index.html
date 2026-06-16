@@ -77,7 +77,10 @@
 
     /* ── PRODUCT GRID ── */
     .product-section { margin-bottom: 12px; }
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; max-width: 500px; margin: 0 auto; justify-content: center; }
+    .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 520px; margin: 0 auto; justify-content: center; }
+    .product-grid .product-card:nth-child(4),
+    .product-grid .product-card:nth-child(5) { /* last row of 2: center them */ }
+    .product-row-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-width: 340px; margin: 10px auto 0; }
     .product-card { aspect-ratio: 3/4; overflow: hidden; background: var(--gray-100); }
     .product-card img {
       width:100%; height:100%; object-fit:cover; display:block;
@@ -449,14 +452,26 @@
       <section class="product-section" aria-label="Product preview">
         <div class="product-grid">
           <div class="product-card">
-            <img src="/images/design1.png" alt="SWIN Drop — Piece 1" loading="eager" />
+            <img src="/images/design1.png" alt="SWIN Drop — Design 1" loading="eager" />
           </div>
           <div class="product-card">
-            <img src="/images/design2.png" alt="SWIN Drop — Piece 2" loading="eager" />
+            <img src="/images/design2.png" alt="SWIN Drop — Design 2" loading="eager" />
+          </div>
+          <div class="product-card">
+            <img src="/images/logoblCK.jpeg" alt="SWIN Drop — Logo Black" loading="eager" />
+          </div>
+        </div>
+        <div class="product-row-2">
+          <div class="product-card">
+            <img src="/images/sleve black .jpeg" alt="SWIN Drop — Sleeve Black" loading="lazy" />
+          </div>
+          <div class="product-card">
+            <img src="/images/whitesleeve.jpeg" alt="SWIN Drop — White Sleeve" loading="lazy" />
           </div>
         </div>
         <p class="product-note">Limited pieces. First come first served.</p>
       </section>
+
 
       <div class="divider"></div>
 
